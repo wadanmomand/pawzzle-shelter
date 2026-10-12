@@ -24,7 +24,7 @@ const List<int> kMilestoneLevels = [10, 25, 50];
 const double kZoneSynergyMult = 1.25;
 
 /// Offline earnings: capped hours, at this efficiency of live income.
-const double kOfflineCapHours = 8.0;
+const double kOfflineCapHours = 12.0;
 const double kOfflineEfficiency = 0.5;
 
 /// Prestige ("Naya Season") requirements.

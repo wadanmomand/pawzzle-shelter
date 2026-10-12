@@ -187,13 +187,13 @@ void main() {
   });
 
   group('offline earnings', () {
-    test('offline capped at 8h at 50% efficiency', () {
+    test('offline capped at 12h at 50% efficiency', () {
       final s = makeState()..coins = 1000;
       ShelterEconomy.buyRoom(s, 'dog_house'); // 1.18/s
       final now = DateTime(2026, 1, 2);
-      s.lastSeen = now.subtract(const Duration(hours: 10));
+      s.lastSeen = now.subtract(const Duration(hours: 16));
       final gained = ShelterEconomy.collectOffline(s, now);
-      expect(gained, closeTo(1.18 * 8 * 3600 * 0.5, 1e-3));
+      expect(gained, closeTo(1.18 * 12 * 3600 * 0.5, 1e-3));
     });
 
     test('short absence earns proportionally', () {
