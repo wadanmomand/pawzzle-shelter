@@ -167,8 +167,8 @@ void main() {
   const encoder = JsonEncoder.withIndent('  ');
   file.writeAsStringSync('${encoder.convert(out)}\n');
 
-  print('OK: ${zones.length} zones, ${rooms.length} rooms, ${pets.length} pets '
-      '-> ${file.path} (${file.lengthSync()} bytes)'); // ignore: avoid_print
+  stdout.writeln('OK: ${zones.length} zones, ${rooms.length} rooms, '
+      '${pets.length} pets -> ${file.path} (${file.lengthSync()} bytes)');
 }
 
 double _pow(double base, int exp) {
