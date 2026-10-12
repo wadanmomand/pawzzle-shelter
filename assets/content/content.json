@@ -1,0 +1,638 @@
+{
+  "zones": [
+    {
+      "index": 0,
+      "name": "Puppy Park",
+      "coinCost": 0.0,
+      "requiredPets": 0
+    },
+    {
+      "index": 1,
+      "name": "Kitten Cove",
+      "coinCost": 5000.0,
+      "requiredPets": 2
+    },
+    {
+      "index": 2,
+      "name": "Flower Garden",
+      "coinCost": 50000.0,
+      "requiredPets": 5
+    },
+    {
+      "index": 3,
+      "name": "Bird Barn",
+      "coinCost": 400000.0,
+      "requiredPets": 9
+    },
+    {
+      "index": 4,
+      "name": "Bunny Meadow",
+      "coinCost": 3000000.0,
+      "requiredPets": 13
+    },
+    {
+      "index": 5,
+      "name": "Pond Paradise",
+      "coinCost": 20000000.0,
+      "requiredPets": 17
+    },
+    {
+      "index": 6,
+      "name": "Sunset Hill",
+      "coinCost": 150000000.0,
+      "requiredPets": 21
+    },
+    {
+      "index": 7,
+      "name": "Starlight Camp",
+      "coinCost": 1000000000.0,
+      "requiredPets": 24
+    },
+    {
+      "index": 8,
+      "name": "Rainbow Falls",
+      "coinCost": 8000000000.0,
+      "requiredPets": 27
+    },
+    {
+      "index": 9,
+      "name": "Golden Palace",
+      "coinCost": 60000000000.0,
+      "requiredPets": 30
+    }
+  ],
+  "rooms": [
+    {
+      "id": "z0r0",
+      "zoneIndex": 0,
+      "name": "Dog House",
+      "baseCost": 50.0,
+      "baseIncome": 1.0
+    },
+    {
+      "id": "z0r1",
+      "zoneIndex": 0,
+      "name": "Puppy Playground",
+      "baseCost": 150.0,
+      "baseIncome": 2.2
+    },
+    {
+      "id": "z0r2",
+      "zoneIndex": 0,
+      "name": "Fetch Field",
+      "baseCost": 450.0,
+      "baseIncome": 4.840000000000001
+    },
+    {
+      "id": "z0r3",
+      "zoneIndex": 0,
+      "name": "Bone Statue",
+      "baseCost": 1350.0,
+      "baseIncome": 10.648000000000003
+    },
+    {
+      "id": "z0r4",
+      "zoneIndex": 0,
+      "name": "Puppy Pool",
+      "baseCost": 4050.0,
+      "baseIncome": 23.42560000000001
+    },
+    {
+      "id": "z0r5",
+      "zoneIndex": 0,
+      "name": "Treat Truck",
+      "baseCost": 12150.0,
+      "baseIncome": 51.536320000000025
+    },
+    {
+      "id": "z1r0",
+      "zoneIndex": 1,
+      "name": "Kitten Tower",
+      "baseCost": 500.0,
+      "baseIncome": 2.0
+    },
+    {
+      "id": "z1r1",
+      "zoneIndex": 1,
+      "name": "Yarn Garden",
+      "baseCost": 1500.0,
+      "baseIncome": 4.4
+    },
+    {
+      "id": "z1r2",
+      "zoneIndex": 1,
+      "name": "Milk Bar",
+      "baseCost": 4500.0,
+      "baseIncome": 9.680000000000001
+    },
+    {
+      "id": "z1r3",
+      "zoneIndex": 1,
+      "name": "Nap Corner",
+      "baseCost": 13500.0,
+      "baseIncome": 21.296000000000006
+    },
+    {
+      "id": "z1r4",
+      "zoneIndex": 1,
+      "name": "Scratching Plaza",
+      "baseCost": 40500.0,
+      "baseIncome": 46.85120000000002
+    },
+    {
+      "id": "z1r5",
+      "zoneIndex": 1,
+      "name": "Fish Dock",
+      "baseCost": 121500.0,
+      "baseIncome": 103.07264000000005
+    },
+    {
+      "id": "z2r0",
+      "zoneIndex": 2,
+      "name": "Flower Beds",
+      "baseCost": 5000.0,
+      "baseIncome": 20.0
+    },
+    {
+      "id": "z2r1",
+      "zoneIndex": 2,
+      "name": "Butterfly Dome",
+      "baseCost": 15000.0,
+      "baseIncome": 44.0
+    },
+    {
+      "id": "z2r2",
+      "zoneIndex": 2,
+      "name": "Fountain",
+      "baseCost": 45000.0,
+      "baseIncome": 96.80000000000001
+    },
+    {
+      "id": "z2r3",
+      "zoneIndex": 2,
+      "name": "Picnic Spot",
+      "baseCost": 135000.0,
+      "baseIncome": 212.96000000000006
+    },
+    {
+      "id": "z2r4",
+      "zoneIndex": 2,
+      "name": "Hedge Corner",
+      "baseCost": 405000.0,
+      "baseIncome": 468.51200000000017
+    },
+    {
+      "id": "z2r5",
+      "zoneIndex": 2,
+      "name": "Sunflower Field",
+      "baseCost": 1215000.0,
+      "baseIncome": 1030.7264000000005
+    },
+    {
+      "id": "z3r0",
+      "zoneIndex": 3,
+      "name": "Birdhouse Row",
+      "baseCost": 40000.0,
+      "baseIncome": 165.0
+    },
+    {
+      "id": "z3r1",
+      "zoneIndex": 3,
+      "name": "Seed Silo",
+      "baseCost": 120000.0,
+      "baseIncome": 363.00000000000006
+    },
+    {
+      "id": "z3r2",
+      "zoneIndex": 3,
+      "name": "Aviary",
+      "baseCost": 360000.0,
+      "baseIncome": 798.6000000000001
+    },
+    {
+      "id": "z3r3",
+      "zoneIndex": 3,
+      "name": "Windmill",
+      "baseCost": 1080000.0,
+      "baseIncome": 1756.9200000000005
+    },
+    {
+      "id": "z3r4",
+      "zoneIndex": 3,
+      "name": "Perch Plaza",
+      "baseCost": 3240000.0,
+      "baseIncome": 3865.2240000000015
+    },
+    {
+      "id": "z3r5",
+      "zoneIndex": 3,
+      "name": "Nest Tower",
+      "baseCost": 9720000.0,
+      "baseIncome": 8503.492800000004
+    },
+    {
+      "id": "z4r0",
+      "zoneIndex": 4,
+      "name": "Burrow Homes",
+      "baseCost": 300000.0,
+      "baseIncome": 1250.0
+    },
+    {
+      "id": "z4r1",
+      "zoneIndex": 4,
+      "name": "Carrot Patch",
+      "baseCost": 900000.0,
+      "baseIncome": 2750.0
+    },
+    {
+      "id": "z4r2",
+      "zoneIndex": 4,
+      "name": "Hop Track",
+      "baseCost": 2700000.0,
+      "baseIncome": 6050.000000000001
+    },
+    {
+      "id": "z4r3",
+      "zoneIndex": 4,
+      "name": "Clover Field",
+      "baseCost": 8100000.0,
+      "baseIncome": 13310.000000000004
+    },
+    {
+      "id": "z4r4",
+      "zoneIndex": 4,
+      "name": "Bunny Barn",
+      "baseCost": 24300000.0,
+      "baseIncome": 29282.00000000001
+    },
+    {
+      "id": "z4r5",
+      "zoneIndex": 4,
+      "name": "Meadow Swing",
+      "baseCost": 72900000.0,
+      "baseIncome": 64420.40000000003
+    },
+    {
+      "id": "z5r0",
+      "zoneIndex": 5,
+      "name": "Duck Deck",
+      "baseCost": 2000000.0,
+      "baseIncome": 8300.0
+    },
+    {
+      "id": "z5r1",
+      "zoneIndex": 5,
+      "name": "Lily Stage",
+      "baseCost": 6000000.0,
+      "baseIncome": 18260.0
+    },
+    {
+      "id": "z5r2",
+      "zoneIndex": 5,
+      "name": "Waterfall",
+      "baseCost": 18000000.0,
+      "baseIncome": 40172.00000000001
+    },
+    {
+      "id": "z5r3",
+      "zoneIndex": 5,
+      "name": "Reed Boats",
+      "baseCost": 54000000.0,
+      "baseIncome": 88378.40000000002
+    },
+    {
+      "id": "z5r4",
+      "zoneIndex": 5,
+      "name": "Frog Corner",
+      "baseCost": 162000000.0,
+      "baseIncome": 194432.48000000007
+    },
+    {
+      "id": "z5r5",
+      "zoneIndex": 5,
+      "name": "Splash Pool",
+      "baseCost": 486000000.0,
+      "baseIncome": 427751.4560000002
+    },
+    {
+      "id": "z6r0",
+      "zoneIndex": 6,
+      "name": "Sunset Deck",
+      "baseCost": 15000000.0,
+      "baseIncome": 62000.0
+    },
+    {
+      "id": "z6r1",
+      "zoneIndex": 6,
+      "name": "Star Tent",
+      "baseCost": 45000000.0,
+      "baseIncome": 136400.0
+    },
+    {
+      "id": "z6r2",
+      "zoneIndex": 6,
+      "name": "Campfire Circle",
+      "baseCost": 135000000.0,
+      "baseIncome": 300080.00000000006
+    },
+    {
+      "id": "z6r3",
+      "zoneIndex": 6,
+      "name": "Hill Slide",
+      "baseCost": 405000000.0,
+      "baseIncome": 660176.0000000002
+    },
+    {
+      "id": "z6r4",
+      "zoneIndex": 6,
+      "name": "Lantern Path",
+      "baseCost": 1215000000.0,
+      "baseIncome": 1452387.2000000007
+    },
+    {
+      "id": "z6r5",
+      "zoneIndex": 6,
+      "name": "Vista Point",
+      "baseCost": 3645000000.0,
+      "baseIncome": 3195251.8400000017
+    },
+    {
+      "id": "z7r0",
+      "zoneIndex": 7,
+      "name": "Tent Village",
+      "baseCost": 100000000.0,
+      "baseIncome": 415000.0
+    },
+    {
+      "id": "z7r1",
+      "zoneIndex": 7,
+      "name": "Bonfire Stage",
+      "baseCost": 300000000.0,
+      "baseIncome": 913000.0000000001
+    },
+    {
+      "id": "z7r2",
+      "zoneIndex": 7,
+      "name": "Night Garden",
+      "baseCost": 900000000.0,
+      "baseIncome": 2008600.0000000002
+    },
+    {
+      "id": "z7r3",
+      "zoneIndex": 7,
+      "name": "Telescope Deck",
+      "baseCost": 2700000000.0,
+      "baseIncome": 4418920.000000001
+    },
+    {
+      "id": "z7r4",
+      "zoneIndex": 7,
+      "name": "Firefly Grove",
+      "baseCost": 8100000000.0,
+      "baseIncome": 9721624.000000004
+    },
+    {
+      "id": "z7r5",
+      "zoneIndex": 7,
+      "name": "Moon Bridge",
+      "baseCost": 24300000000.0,
+      "baseIncome": 21387572.800000012
+    },
+    {
+      "id": "z8r0",
+      "zoneIndex": 8,
+      "name": "Rainbow Bridge",
+      "baseCost": 800000000.0,
+      "baseIncome": 3300000.0
+    },
+    {
+      "id": "z8r1",
+      "zoneIndex": 8,
+      "name": "Falls Overlook",
+      "baseCost": 2400000000.0,
+      "baseIncome": 7260000.000000001
+    },
+    {
+      "id": "z8r2",
+      "zoneIndex": 8,
+      "name": "Mist Garden",
+      "baseCost": 7200000000.0,
+      "baseIncome": 15972000.000000002
+    },
+    {
+      "id": "z8r3",
+      "zoneIndex": 8,
+      "name": "Crystal Cave",
+      "baseCost": 21600000000.0,
+      "baseIncome": 35138400.00000001
+    },
+    {
+      "id": "z8r4",
+      "zoneIndex": 8,
+      "name": "Prism Plaza",
+      "baseCost": 64800000000.0,
+      "baseIncome": 77304480.00000003
+    },
+    {
+      "id": "z8r5",
+      "zoneIndex": 8,
+      "name": "Cloud Steps",
+      "baseCost": 194400000000.0,
+      "baseIncome": 170069856.0000001
+    },
+    {
+      "id": "z9r0",
+      "zoneIndex": 9,
+      "name": "Golden Statue",
+      "baseCost": 6000000000.0,
+      "baseIncome": 25000000.0
+    },
+    {
+      "id": "z9r1",
+      "zoneIndex": 9,
+      "name": "Trophy Hall",
+      "baseCost": 18000000000.0,
+      "baseIncome": 55000000.00000001
+    },
+    {
+      "id": "z9r2",
+      "zoneIndex": 9,
+      "name": "Royal Kennel",
+      "baseCost": 54000000000.0,
+      "baseIncome": 121000000.00000001
+    },
+    {
+      "id": "z9r3",
+      "zoneIndex": 9,
+      "name": "Crown Garden",
+      "baseCost": 162000000000.0,
+      "baseIncome": 266200000.0000001
+    },
+    {
+      "id": "z9r4",
+      "zoneIndex": 9,
+      "name": "VIP Lounge",
+      "baseCost": 486000000000.0,
+      "baseIncome": 585640000.0000002
+    },
+    {
+      "id": "z9r5",
+      "zoneIndex": 9,
+      "name": "Hall of Fame",
+      "baseCost": 1458000000000.0,
+      "baseIncome": 1288408000.0000007
+    }
+  ],
+  "pets": [
+    {
+      "id": "puppy_milo",
+      "name": "Milo",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_coco",
+      "name": "Coco",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_biscuit",
+      "name": "Biscuit",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_buddy",
+      "name": "Buddy",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_daisy",
+      "name": "Daisy",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_lucky",
+      "name": "Lucky",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_pepper",
+      "name": "Pepper",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_snowy",
+      "name": "Snowy",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_teddy",
+      "name": "Teddy",
+      "rarity": "common"
+    },
+    {
+      "id": "puppy_rocky",
+      "name": "Rocky",
+      "rarity": "epic"
+    },
+    {
+      "id": "puppy_waffles",
+      "name": "Waffles",
+      "rarity": "rare"
+    },
+    {
+      "id": "puppy_max",
+      "name": "Max",
+      "rarity": "rare"
+    },
+    {
+      "id": "kitten_luna",
+      "name": "Luna",
+      "rarity": "common"
+    },
+    {
+      "id": "kitten_bella",
+      "name": "Bella",
+      "rarity": "common"
+    },
+    {
+      "id": "kitten_chloe",
+      "name": "Chloe",
+      "rarity": "common"
+    },
+    {
+      "id": "kitten_lily",
+      "name": "Lily",
+      "rarity": "common"
+    },
+    {
+      "id": "kitten_misty",
+      "name": "Misty",
+      "rarity": "common"
+    },
+    {
+      "id": "kitten_oliver",
+      "name": "Oliver",
+      "rarity": "rare"
+    },
+    {
+      "id": "kitten_oreo",
+      "name": "Oreo",
+      "rarity": "rare"
+    },
+    {
+      "id": "kitten_poppy",
+      "name": "Poppy",
+      "rarity": "rare"
+    },
+    {
+      "id": "kitten_rosie",
+      "name": "Rosie",
+      "rarity": "rare"
+    },
+    {
+      "id": "kitten_smokey",
+      "name": "Smokey",
+      "rarity": "common"
+    },
+    {
+      "id": "kitten_tiger",
+      "name": "Tiger",
+      "rarity": "rare"
+    },
+    {
+      "id": "kitten_simba",
+      "name": "Simba",
+      "rarity": "epic"
+    },
+    {
+      "id": "golden_max",
+      "name": "Max",
+      "rarity": "epic"
+    },
+    {
+      "id": "golden_luna",
+      "name": "Luna",
+      "rarity": "epic"
+    },
+    {
+      "id": "golden_bella",
+      "name": "Bella",
+      "rarity": "rare"
+    },
+    {
+      "id": "golden_oliver",
+      "name": "Oliver",
+      "rarity": "rare"
+    },
+    {
+      "id": "golden_coco",
+      "name": "Coco",
+      "rarity": "epic"
+    },
+    {
+      "id": "golden_biscuit",
+      "name": "Biscuit",
+      "rarity": "rare"
+    }
+  ]
+}
