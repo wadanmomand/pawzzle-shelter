@@ -16,6 +16,10 @@ class Sfx {
   static AudioPlayer? _music;
   static bool _musicOn = false;
 
+  /// Master toggles (settings screen).
+  static bool sfxEnabled = true;
+  static bool musicEnabled = true;
+
   /// Null when no Flutter binding exists (pure Dart unit tests) — audio
   /// stays silent there. WidgetsBinding.instance throws synchronously
   /// when uninitialized, which is catchable (unlike the async platform
@@ -40,6 +44,7 @@ class Sfx {
   }
 
   static Future<void> _play(String file, {double volume = 1.0}) async {
+    if (!sfxEnabled) return;
     try {
       final pool = _ensurePool();
       if (pool == null) return;
@@ -62,7 +67,7 @@ class Sfx {
   static void prestige() => _play('audio/win.wav');
 
   static Future<void> startMusic() async {
-    if (_musicOn || _probeBinding() == null) return;
+    if (_musicOn || !musicEnabled || _probeBinding() == null) return;
     _musicOn = true;
     try {
       _music ??= AudioPlayer();

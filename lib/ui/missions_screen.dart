@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelter/ads/ad_service.dart';
 import 'package:shelter/core/economy.dart';
 import 'package:shelter/core/format.dart';
 import 'package:shelter/core/missions.dart';
@@ -129,22 +130,29 @@ class MissionsScreen extends ConsumerWidget {
               onPressed: () => notifier.claimMission(m.petId),
               child: const Text('Claim'),
             )
-          else
+          else if (canAfford)
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                foregroundColor:
-                    canAfford ? AppColors.primaryDark : AppColors.textSoft,
-                side: BorderSide(
-                    color: canAfford
-                        ? AppColors.primaryDark
-                        : AppColors.textSoft),
+                foregroundColor: AppColors.primaryDark,
+                side:
+                    const BorderSide(color: AppColors.primaryDark),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30)),
               ),
-              onPressed: canAfford
-                  ? () => notifier.instantFinish(m.petId)
-                  : null,
+              onPressed: () => notifier.instantFinish(m.petId),
               child: Text('${formatCompact(cost)} treats'),
+            )
+          else
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.teal,
+                side: const BorderSide(color: AppColors.teal),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
+              ),
+              onPressed: () => _instantFinishWithAd(context, notifier, m.petId),
+              icon: const Icon(Icons.play_circle_outline_rounded, size: 16),
+              label: const Text('Watch ad'),
             ),
         ],
       ),
@@ -215,5 +223,18 @@ class MissionsScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _instantFinishWithAd(
+      BuildContext context, GameNotifier notifier, String petId) async {
+    final earned = await AdService.instance.showRewarded();
+    if (!context.mounted) return;
+    if (earned) {
+      notifier.instantFinishFree(petId);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No ad ready — try again later')),
+      );
+    }
   }
 }

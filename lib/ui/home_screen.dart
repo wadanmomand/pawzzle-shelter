@@ -6,9 +6,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shelter/ads/ad_service.dart';
 import 'package:shelter/core/economy.dart';
 import 'package:shelter/core/format.dart';
 import 'package:shelter/state/game.dart';
+import 'package:shelter/ui/settings_screen.dart';
 import 'package:shelter/ui/theme.dart';
 import 'package:shelter/ui/widgets.dart';
 
@@ -102,7 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             },
           ),
         ),
-        _tapArea(shelter),
+        _tapArea(data),
       ],
     );
   }
@@ -118,10 +120,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             iconColor: AppColors.gold,
           ),
           const SizedBox(width: 8),
-          CurrencyPill(
-            icon: Icons.cookie_rounded,
-            text: formatCompact(shelter.treats),
-            iconColor: AppColors.primaryDark,
+          GestureDetector(
+            onTap: _freeTreats,
+            child: CurrencyPill(
+              icon: Icons.cookie_rounded,
+              text: '${formatCompact(shelter.treats)} +',
+              iconColor: AppColors.primaryDark,
+            ),
           ),
           const SizedBox(width: 8),
           CurrencyPill(
@@ -138,9 +143,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: AppColors.teal,
             ),
           ),
+          IconButton(
+            icon: const Icon(Icons.settings_rounded,
+                color: AppColors.textSoft),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const SettingsScreen()),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _freeTreats() async {
+    final earned = await AdService.instance.showRewarded();
+    if (!mounted) return;
+    if (earned) {
+      ref.read(gameProvider.notifier).grantTreats(5);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('+5 treats!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No ad ready — try again later')),
+      );
+    }
   }
 
   Widget _zoneChips(GameData data) {
@@ -329,57 +358,121 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _tapArea(ShelterState shelter) {
-    return SizedBox(
-      height: 150,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // floating +N texts
-          for (final f in _floaters)
-            _FloaterWidget(key: ValueKey(f.id), text: f.text, dx: f.dx),
-          GestureDetector(
-            onTapDown: _onTapDown,
-            child: ScaleTransition(
-              scale: _tapCtrl,
-              child: Container(
-                width: 108,
-                height: 108,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryDark],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.cardShadow,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
-                    )
-                  ],
-                ),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.pets_rounded, size: 40, color: Colors.white),
-                    Text(
-                      'TAP',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14,
+  Widget _tapArea(GameData data) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: 150,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // floating +N texts
+              for (final f in _floaters)
+                _FloaterWidget(key: ValueKey(f.id), text: f.text, dx: f.dx),
+              GestureDetector(
+                onTapDown: _onTapDown,
+                child: ScaleTransition(
+                  scale: _tapCtrl,
+                  child: Container(
+                    width: 108,
+                    height: 108,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary, AppColors.primaryDark],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.cardShadow,
+                          blurRadius: 12,
+                          offset: Offset(0, 6),
+                        )
+                      ],
                     ),
-                  ],
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.pets_rounded,
+                            size: 40, color: Colors.white),
+                        Text(
+                          'TAP',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
+        _autoTapperChip(data),
+        const SizedBox(height: 6),
+      ],
+    );
+  }
+
+  Widget _autoTapperChip(GameData data) {
+    final active = data.autoTapperActive;
+    return GestureDetector(
+      onTap: active ? null : _startAutoTapper,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: active ? AppColors.teal : AppColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+                color: AppColors.cardShadow,
+                blurRadius: 6,
+                offset: Offset(0, 2))
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.bolt_rounded,
+              size: 15,
+              color: active ? Colors.white : AppColors.primaryDark,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              active
+                  ? 'Auto-tapper ${formatDuration(data.autoTapperUntil!.difference(DateTime.now()))}'
+                  : 'Auto-tapper 4h (watch ad)',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 12,
+                color: active ? Colors.white : AppColors.textDark,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _startAutoTapper() async {
+    final earned = await AdService.instance.showRewarded();
+    if (!mounted) return;
+    if (earned) {
+      ref.read(gameProvider.notifier).startAutoTapper();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Auto-tapper on for 4 hours!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No ad ready — try again later')),
+      );
+    }
   }
 }
 
