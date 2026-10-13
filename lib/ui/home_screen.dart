@@ -10,7 +10,8 @@ import 'package:shelter/ads/ad_service.dart';
 import 'package:shelter/core/economy.dart';
 import 'package:shelter/core/format.dart';
 import 'package:shelter/state/game.dart';
-import 'package:shelter/ui/settings_screen.dart';
+import 'package:shelter/ui/anim.dart';
+import 'package:shelter/ui/nav.dart';
 import 'package:shelter/ui/theme.dart';
 import 'package:shelter/ui/widgets.dart';
 
@@ -146,11 +147,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           IconButton(
             icon: const Icon(Icons.settings_rounded,
                 color: AppColors.textSoft),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => const SettingsScreen()),
-            ),
+            onPressed: () => openSettings(context),
           ),
         ],
       ),
@@ -189,7 +186,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               !unlocked && (i == 0 || shelter.unlockedZones.contains(i - 1));
           return Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: GestureDetector(
+            child: BounceButton(
               onTap: () {
                 if (unlocked) {
                   ref.read(gameProvider.notifier).selectZone(i);
@@ -271,7 +268,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             onPressed: () {
               Navigator.pop(ctx);
-              if (!notifier.unlockZone(index)) {
+              if (notifier.unlockZone(index)) {
+                ConfettiBurst.show(context);
+              } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                       content: Text('Not enough coins or pets yet!')),
@@ -289,7 +288,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final gain = ShelterEconomy.prestigeGain(shelter);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: GestureDetector(
+      child: BounceButton(
         onTap: () => _confirmPrestige(gain),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -350,6 +349,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             onPressed: () {
               Navigator.pop(ctx);
               notifier.doPrestige();
+              ConfettiBurst.show(context);
             },
             child: const Text('Prestige!'),
           ),
@@ -421,7 +421,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   Widget _autoTapperChip(GameData data) {
     final active = data.autoTapperActive;
-    return GestureDetector(
+    return BounceButton(
       onTap: active ? null : _startAutoTapper,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),

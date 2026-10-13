@@ -4,6 +4,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:shelter/core/economy.dart';
 import 'package:shelter/core/format.dart';
+import 'package:shelter/ui/anim.dart';
 import 'package:shelter/ui/theme.dart';
 
 class CurrencyPill extends StatelessWidget {
@@ -34,14 +35,7 @@ class CurrencyPill extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: iconColor),
           const SizedBox(width: 4),
-          Text(
-            text,
-            style: const TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-              color: AppColors.textDark,
-            ),
-          ),
+          AnimatedNumber(text: text),
         ],
       ),
     );
@@ -163,7 +157,7 @@ class _UpgradeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = affordable && cost != null;
-    return GestureDetector(
+    return BounceButton(
       onTap: enabled ? onTap : null,
       child: Opacity(
         opacity: enabled || cost == null ? 1.0 : 0.55,

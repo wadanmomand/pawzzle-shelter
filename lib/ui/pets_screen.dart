@@ -7,6 +7,7 @@ import 'package:shelter/core/economy.dart';
 import 'package:shelter/core/format.dart';
 import 'package:shelter/core/missions.dart';
 import 'package:shelter/state/game.dart';
+import 'package:shelter/ui/anim.dart';
 import 'package:shelter/ui/theme.dart';
 
 class PetsScreen extends ConsumerWidget {
@@ -62,7 +63,7 @@ class PetsScreen extends ConsumerWidget {
     final mission = missions.active[def.id];
     final color = rarityColor(def.rarity);
 
-    return GestureDetector(
+    return BounceButton(
       onTap: () {
         if (rescued) {
           _petSheet(context, ref, data, def);

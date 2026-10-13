@@ -334,6 +334,7 @@ class GameNotifier extends Notifier<GameData> {
     final d = _d;
     if (d == null) return;
     Sfx.sfxEnabled = v;
+    if (v) Sfx.click(); // audible confirmation when turning SFX on
     state = d.withSettings(sfxOn: v);
     saveNow();
   }

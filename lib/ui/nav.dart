@@ -2,19 +2,14 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:shelter/ui/anim.dart';
 import 'package:shelter/ui/hub_screen.dart';
 import 'package:shelter/ui/settings_screen.dart';
 
 void openSettings(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-  );
+  Navigator.push(context, fadeScaleRoute(const SettingsScreen()));
 }
 
 void openHub(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => const HubScreen()),
-  );
+  Navigator.push(context, fadeScaleRoute(const HubScreen()));
 }
