@@ -9,6 +9,7 @@ import 'package:shelter/core/missions.dart';
 import 'package:shelter/state/game.dart';
 import 'package:shelter/ui/anim.dart';
 import 'package:shelter/ui/theme.dart';
+import 'package:shelter/ui/widgets.dart';
 
 class PetsScreen extends ConsumerWidget {
   const PetsScreen({super.key});
@@ -18,23 +19,85 @@ class PetsScreen extends ConsumerWidget {
     final data = ref.watch(gameProvider);
     final content = data.content!;
     final missions = data.missions!;
+    final shelter = data.shelter!;
     final pets = content.pets.values.toList()
       ..sort((a, b) => a.rarity.index.compareTo(b.rarity.index));
+    final rescuedCount = missions.rescued.length;
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+        // Album header card
+        Container(
+          margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: const [
+              BoxShadow(
+                  color: AppColors.cardShadow,
+                  blurRadius: 10,
+                  offset: Offset(0, 3))
+            ],
+          ),
           child: Row(
             children: [
-              const Text('My Pets',
-                  style:
-                      TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-              const Spacer(),
-              Text('${missions.rescued.length}/30 rescued',
-                  style: const TextStyle(
-                      color: AppColors.textSoft,
-                      fontWeight: FontWeight.w700)),
+              const Expanded(
+                child: Text(
+                  'PETS ALBUM',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24,
+                    color: Color(0xFFE8A93D),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              CurrencyPill(
+                asset: 'assets/zones/gold-coin.png',
+                text: formatCompact(shelter.coins),
+                iconColor: AppColors.gold,
+              ),
+            ],
+          ),
+        ),
+        // Collection progress
+        Container(
+          margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: const [
+              BoxShadow(
+                  color: AppColors.cardShadow,
+                  blurRadius: 8,
+                  offset: Offset(0, 2))
+            ],
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Your rescued friends • $rescuedCount/30 collected',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: rescuedCount / 30,
+                  minHeight: 10,
+                  backgroundColor: const Color(0xFFF3E5DC),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.primary),
+                ),
+              ),
             ],
           ),
         ),
@@ -43,10 +106,10 @@ class PetsScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(12),
             gridDelegate:
                 const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 0.82,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              crossAxisCount: 2,
+              childAspectRatio: 0.78,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
             ),
             itemCount: pets.length,
             itemBuilder: (_, i) => _petCard(context, ref, data, pets[i]),
@@ -56,12 +119,20 @@ class PetsScreen extends ConsumerWidget {
     );
   }
 
+  int _rarityStars(Rarity r) => switch (r) {
+        Rarity.common => 1,
+        Rarity.rare => 2,
+        Rarity.epic => 3,
+      };
+
   Widget _petCard(
       BuildContext context, WidgetRef ref, GameData data, PetDef def) {
     final missions = data.missions!;
     final rescued = missions.rescued.contains(def.id);
     final mission = missions.active[def.id];
     final color = rarityColor(def.rarity);
+    final petState = data.shelter!.pets[def.id];
+    final happiness = petState?.happiness ?? 0.0;
 
     return BounceButton(
       onTap: () {
@@ -79,21 +150,21 @@ class PetsScreen extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color, width: rescued ? 2 : 1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color, width: rescued ? 2.5 : 1),
           boxShadow: const [
             BoxShadow(
                 color: AppColors.cardShadow,
-                blurRadius: 6,
-                offset: Offset(0, 2))
+                blurRadius: 10,
+                offset: Offset(0, 3))
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
+              flex: 5,
               child: Padding(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 4),
                 child: Opacity(
                   opacity: rescued || mission != null ? 1.0 : 0.35,
                   child: Image.asset(
@@ -101,29 +172,84 @@ class PetsScreen extends ConsumerWidget {
                     fit: BoxFit.contain,
                     errorBuilder: (_, _, _) => const Icon(
                         Icons.pets_rounded,
-                        size: 40,
+                        size: 48,
                         color: AppColors.textSoft),
                   ),
                 ),
               ),
             ),
-            Text(def.name,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w800, fontSize: 12)),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 2),
-              child: mission != null
-                  ? _missionMini(mission)
-                  : Text(
-                      rescued
-                          ? rarityLabel(def.rarity)
-                          : 'Tap to rescue',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: rescued ? color : AppColors.textSoft,
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(def.name,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w900, fontSize: 16)),
+                    const SizedBox(height: 4),
+                    if (rescued) ...[
+                      Row(
+                        children: [
+                          const Icon(Icons.favorite_rounded,
+                              color: AppColors.primaryDark, size: 16),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: LinearProgressIndicator(
+                                value: happiness / 100,
+                                minHeight: 9,
+                                backgroundColor:
+                                    const Color(0xFFF3E5DC),
+                                valueColor:
+                                    const AlwaysStoppedAnimation<Color>(
+                                        AppColors.primary),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text('${happiness.round()}%',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 10,
+                                  color: AppColors.textSoft)),
+                        ],
                       ),
+                      const SizedBox(height: 3),
+                    ] else if (mission != null)
+                      _missionMini(mission)
+                    else
+                      const Text('Tap to rescue',
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textSoft)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (int s = 0;
+                            s < _rarityStars(def.rarity);
+                            s++)
+                          const Icon(Icons.star_rounded,
+                              size: 14, color: AppColors.gold),
+                        const SizedBox(width: 4),
+                        Text(
+                          rarityLabel(def.rarity).toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: color,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

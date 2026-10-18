@@ -86,8 +86,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Column(
       children: [
         _topBar(shelter),
+        _currencyRow(shelter),
         _zoneChips(data),
         if (ShelterEconomy.canPrestige(shelter)) _prestigeBanner(shelter),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'ROOMS — ${rooms.where((r) => shelter.rooms[r.id]!.isBuilt).length}/${rooms.length} unlocked',
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 15,
+                color: AppColors.textDark,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.only(bottom: 8),
@@ -111,43 +127,80 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Widget _topBar(ShelterState shelter) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+              color: AppColors.cardShadow,
+              blurRadius: 10,
+              offset: Offset(0, 3))
+        ],
+      ),
       child: Row(
         children: [
-          CurrencyPill(
-            icon: Icons.monetization_on_rounded,
-            text: formatCompact(shelter.coins),
-            iconColor: AppColors.gold,
-          ),
+          const Icon(Icons.auto_awesome_rounded,
+              color: AppColors.gold, size: 22),
           const SizedBox(width: 8),
-          GestureDetector(
-            onTap: _freeTreats,
-            child: CurrencyPill(
-              icon: Icons.cookie_rounded,
-              text: '${formatCompact(shelter.treats)} +',
-              iconColor: AppColors.primaryDark,
+          const Expanded(
+            child: Text(
+              'Pawzzle Shelter',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 23,
+                color: AppColors.teal,
+                letterSpacing: 0.3,
+              ),
             ),
           ),
-          const SizedBox(width: 8),
           CurrencyPill(
             icon: Icons.pets_rounded,
             text: formatCompact(shelter.goldenPaws),
             iconColor: AppColors.teal,
           ),
-          const Spacer(),
-          Text(
-            '${formatCompact(ShelterEconomy.totalIncomePerSec(shelter))}/s',
-            style: const TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-              color: AppColors.teal,
+          const SizedBox(width: 8),
+          BounceButton(
+            onTap: () => openSettings(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: AppColors.teal,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.settings_rounded,
+                  color: Colors.white, size: 20),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.settings_rounded,
-                color: AppColors.textSoft),
-            onPressed: () => openSettings(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _currencyRow(ShelterState shelter) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 2, 12, 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: CurrencyPill(
+              asset: 'assets/zones/gold-coin.png',
+              text: formatCompact(shelter.coins),
+              iconColor: AppColors.gold,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: GestureDetector(
+              onTap: _freeTreats,
+              child: CurrencyPill(
+                asset: 'assets/zones/treat-bone.png',
+                text: '${formatCompact(shelter.treats)} +',
+                iconColor: AppColors.primaryDark,
+              ),
+            ),
           ),
         ],
       ),
@@ -196,22 +249,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               },
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 decoration: BoxDecoration(
                   color: selected
-                      ? AppColors.primaryDark
+                      ? AppColors.teal
                       : unlocked
                           ? AppColors.surface
                           : const Color(0xFFF3E5DC),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: selected
-                      ? const [
-                          BoxShadow(
-                              color: AppColors.cardShadow,
-                              blurRadius: 6,
-                              offset: Offset(0, 2))
-                        ]
+                  borderRadius: BorderRadius.circular(22),
+                  border: !selected && unlocked
+                      ? Border.all(color: AppColors.teal, width: 1.5)
                       : null,
+                  boxShadow: const [
+                    BoxShadow(
+                        color: AppColors.cardShadow,
+                        blurRadius: 6,
+                        offset: Offset(0, 2))
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -225,8 +279,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           : '${z.name} • ${formatCompact(z.coinCost)}',
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
-                        fontSize: 12,
-                        color: selected ? Colors.white : AppColors.textDark,
+                        fontSize: 13,
+                        color: selected
+                            ? Colors.white
+                            : unlocked
+                                ? AppColors.teal
+                                : AppColors.textSoft,
                       ),
                     ),
                   ],
@@ -359,63 +417,107 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Widget _tapArea(GameData data) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          height: 150,
-          child: Stack(
-            alignment: Alignment.center,
+    final shelter = data.shelter!;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+              color: AppColors.cardShadow,
+              blurRadius: 10,
+              offset: Offset(0, 3))
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // floating +N texts
-              for (final f in _floaters)
-                _FloaterWidget(key: ValueKey(f.id), text: f.text, dx: f.dx),
-              GestureDetector(
-                onTapDown: _onTapDown,
-                child: ScaleTransition(
-                  scale: _tapCtrl,
-                  child: Container(
-                    width: 108,
-                    height: 108,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.primaryDark],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.cardShadow,
-                          blurRadius: 12,
-                          offset: Offset(0, 6),
-                        )
-                      ],
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.pets_rounded,
-                            size: 40, color: Colors.white),
-                        Text(
-                          'TAP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 14,
+              SizedBox(
+                height: 150,
+                width: 170,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // floating +N texts
+                    for (final f in _floaters)
+                      _FloaterWidget(
+                          key: ValueKey(f.id), text: f.text, dx: f.dx),
+                    GestureDetector(
+                      onTapDown: _onTapDown,
+                      child: ScaleTransition(
+                        scale: _tapCtrl,
+                        child: Container(
+                          width: 128,
+                          height: 128,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.primary,
+                                AppColors.primaryDark
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.cardShadow,
+                                blurRadius: 12,
+                                offset: Offset(0, 6),
+                              )
+                            ],
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.pets_rounded,
+                                  size: 44, color: Colors.white),
+                              Text(
+                                'TAP',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 22,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
+              ),
+              const SizedBox(width: 4),
+              Image.asset(
+                'assets/pets/puppy_milo.webp',
+                width: 110,
+                height: 110,
+                fit: BoxFit.contain,
+                errorBuilder: (_, _, _) => const SizedBox(width: 110),
               ),
             ],
           ),
-        ),
-        _autoTapperChip(data),
-        const SizedBox(height: 6),
-      ],
+          const SizedBox(height: 4),
+          Text(
+            'TOTAL INCOME: ${formatCompact(ShelterEconomy.totalIncomePerSec(shelter))}/s • Passive earnings while away!',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+              color: AppColors.teal,
+            ),
+          ),
+          const SizedBox(height: 6),
+          _autoTapperChip(data),
+        ],
+      ),
     );
   }
 

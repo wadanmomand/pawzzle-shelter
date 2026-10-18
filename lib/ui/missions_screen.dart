@@ -8,6 +8,7 @@ import 'package:shelter/core/economy.dart';
 import 'package:shelter/core/format.dart';
 import 'package:shelter/core/missions.dart';
 import 'package:shelter/state/game.dart';
+import 'package:shelter/ui/anim.dart';
 import 'package:shelter/ui/theme.dart';
 
 class MissionsScreen extends ConsumerWidget {
@@ -30,13 +31,36 @@ class MissionsScreen extends ConsumerWidget {
       ..sort((a, b) => a.rarity.index.compareTo(b.rarity.index));
 
     return ListView(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
-          child: Text('Rescue Missions',
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+        // Title card
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: const [
+              BoxShadow(
+                  color: AppColors.cardShadow,
+                  blurRadius: 10,
+                  offset: Offset(0, 3))
+            ],
+          ),
+          child: const Text(
+            'Rescue Missions',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 24,
+              color: AppColors.textDark,
+              letterSpacing: 0.3,
+            ),
+          ),
         ),
+        const SizedBox(height: 8),
+        _statsRow(data),
+        const SizedBox(height: 4),
         if (active.isEmpty)
           const Padding(
             padding: EdgeInsets.all(16),
@@ -51,11 +75,98 @@ class MissionsScreen extends ConsumerWidget {
         const Padding(
           padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
           child: Text('Available rescues',
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
         ),
         for (final p in available) _availableCard(context, notifier, data, p),
       ],
     );
+  }
+
+  Widget _statsRow(GameData data) {
+    final shelter = data.shelter!;
+    return Row(
+      children: [
+        Expanded(
+            child: _statBox('assets/zones/gold-coin.png',
+                formatCompact(shelter.coins), 'Coins')),
+        const SizedBox(width: 8),
+        Expanded(
+            child: _statBox('assets/zones/treat-bone.png',
+                formatCompact(shelter.treats), 'Treats')),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: const [
+                BoxShadow(
+                    color: AppColors.cardShadow,
+                    blurRadius: 8,
+                    offset: Offset(0, 2))
+              ],
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.favorite_rounded,
+                    color: AppColors.primaryDark, size: 26),
+                Text('${data.missions!.rescued.length}/30',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w900, fontSize: 17)),
+                const Text('Pets Rescued',
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSoft,
+                        fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _statBox(String asset, String value, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: const [
+          BoxShadow(
+              color: AppColors.cardShadow,
+              blurRadius: 8,
+              offset: Offset(0, 2))
+        ],
+      ),
+      child: Column(
+        children: [
+          Image.asset(asset, width: 28, height: 28, fit: BoxFit.contain),
+          Text(value,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w900, fontSize: 17)),
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSoft,
+                  fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  String _difficulty(Rarity r) => switch (r) {
+        Rarity.common => 'Easy',
+        Rarity.rare => 'Medium',
+        Rarity.epic => 'Hard',
+      };
+
+  String _location(GameData data, String petId) {
+    final ids = data.content!.pets.keys.toList();
+    final idx = ids.indexOf(petId);
+    final zones = data.content!.zones;
+    return zones[idx % zones.length].name;
   }
 
   Widget _missionCard(BuildContext context, GameNotifier notifier,
@@ -67,94 +178,158 @@ class MissionsScreen extends ConsumerWidget {
     final canAfford = data.shelter!.treats >= cost;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: rarityColor(pet.rarity), width: 1.5),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+            color: ready ? AppColors.teal : rarityColor(pet.rarity),
+            width: ready ? 2.5 : 1.5),
         boxShadow: const [
           BoxShadow(
-              color: AppColors.cardShadow, blurRadius: 6, offset: Offset(0, 2))
+              color: AppColors.cardShadow,
+              blurRadius: 10,
+              offset: Offset(0, 3))
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 56,
-            height: 56,
-            child: Image.asset('assets/pets/${pet.id}.webp',
-                fit: BoxFit.contain),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Rescue ${pet.name}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 15)),
-                const SizedBox(height: 4),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 8,
-                    backgroundColor: const Color(0xFFF3E5DC),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        ready ? AppColors.teal : AppColors.primary),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  ready ? 'Ready to claim!' : formatDuration(m.remaining(now)),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color:
-                        ready ? AppColors.teal : AppColors.textSoft,
-                  ),
-                ),
-              ],
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+              color: ready ? AppColors.teal : AppColors.teal.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              ready ? 'COMPLETE' : 'ACTIVE',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 12,
+                letterSpacing: 0.5,
+                color: ready ? Colors.white : AppColors.teal,
+              ),
             ),
           ),
-          const SizedBox(width: 8),
-          if (ready)
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.teal,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset('assets/pets/${pet.id}.webp',
+                    width: 76, height: 76, fit: BoxFit.cover),
               ),
-              onPressed: () => notifier.claimMission(m.petId),
-              child: const Text('Claim'),
-            )
-          else if (canAfford)
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primaryDark,
-                side:
-                    const BorderSide(color: AppColors.primaryDark),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Rescue ${pet.name}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w900, fontSize: 18)),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${_location(data, pet.id)} • ${_difficulty(pet.rarity)}',
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSoft,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 10,
+                        backgroundColor: const Color(0xFFF3E5DC),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            ready ? AppColors.teal : AppColors.primary),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      ready
+                          ? 'Ready to Claim!'
+                          : 'Time remaining: ${formatDuration(m.remaining(now))}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: ready ? AppColors.teal : AppColors.textDark,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              onPressed: () => notifier.instantFinish(m.petId),
-              child: Text('${formatCompact(cost)} treats'),
-            )
-          else
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.teal,
-                side: const BorderSide(color: AppColors.teal),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-              ),
-              onPressed: () => _instantFinishWithAd(context, notifier, m.petId),
-              icon: const Icon(Icons.play_circle_outline_rounded, size: 16),
-              label: const Text('Watch ad'),
-            ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ready
+                ? _actionButton(
+                    label: 'Claim',
+                    gold: true,
+                    onTap: () => notifier.claimMission(m.petId),
+                  )
+                : canAfford
+                    ? _actionButton(
+                        label:
+                            'Finish now • ${formatCompact(cost)} treats',
+                        gold: false,
+                        onTap: () => notifier.instantFinish(m.petId),
+                      )
+                    : _actionButton(
+                        label: 'Watch ad to finish',
+                        gold: false,
+                        onTap: () => _instantFinishWithAd(
+                            context, notifier, m.petId),
+                      ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _actionButton(
+      {required String label,
+      required bool gold,
+      required VoidCallback onTap}) {
+    return BounceButton(
+      onTap: onTap,
+      child: Container(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: gold
+              ? const LinearGradient(
+                  colors: [Color(0xFFFFD54F), Color(0xFFFFB300)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                )
+              : const LinearGradient(
+                  colors: [Color(0xFFFF8A65), Color(0xFFF46B45)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(
+                color: AppColors.cardShadow,
+                blurRadius: 6,
+                offset: Offset(0, 3))
+          ],
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -169,56 +344,55 @@ class MissionsScreen extends ConsumerWidget {
         : missionDuration(pet.rarity);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(
-              color: AppColors.cardShadow, blurRadius: 6, offset: Offset(0, 2))
+              color: AppColors.cardShadow, blurRadius: 10, offset: Offset(0, 3))
         ],
       ),
       child: Row(
         children: [
-          SizedBox(
-            width: 48,
-            height: 48,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
             child: Opacity(
-              opacity: 0.45,
+              opacity: 0.55,
               child: Image.asset('assets/pets/${pet.id}.webp',
-                  fit: BoxFit.contain),
+                  width: 56, height: 56, fit: BoxFit.cover),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(pet.name,
+                Text('Rescue ${pet.name}',
                     style: const TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 14)),
+                        fontWeight: FontWeight.w900, fontSize: 16)),
+                const SizedBox(height: 2),
                 Text(
-                  '${rarityLabel(pet.rarity)} • ${formatDuration(duration)}',
+                  '${_location(data, pet.id)} • ${_difficulty(pet.rarity)} • ${formatDuration(duration)}',
                   style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       color: AppColors.textSoft,
                       fontWeight: FontWeight.w600),
                 ),
               ],
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
+          const SizedBox(width: 8),
+          Opacity(
+            opacity: slotsLeft > 0 ? 1 : 0.4,
+            child: _actionButton(
+              label: 'Start Rescue',
+              gold: false,
+              onTap: slotsLeft > 0
+                  ? () => notifier.startMission(pet.id)
+                  : () {},
             ),
-            onPressed: slotsLeft > 0
-                ? () => notifier.startMission(pet.id)
-                : null,
-            child: const Text('Rescue'),
           ),
         ],
       ),

@@ -199,7 +199,8 @@ class _ConfettiPainter extends CustomPainter {
 /// Currency text that rolls/fades when the value changes.
 class AnimatedNumber extends StatelessWidget {
   final String text;
-  const AnimatedNumber({super.key, required this.text});
+  final TextStyle? style;
+  const AnimatedNumber({super.key, required this.text, this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -213,11 +214,12 @@ class AnimatedNumber extends StatelessWidget {
       child: Text(
         text,
         key: ValueKey(text),
-        style: const TextStyle(
-          fontWeight: FontWeight.w800,
-          fontSize: 13,
-          color: AppColors.textDark,
-        ),
+        style: style ??
+            const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+              color: AppColors.textDark,
+            ),
       ),
     );
   }
