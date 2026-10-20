@@ -1,4 +1,4 @@
-﻿import java.io.FileInputStream
+import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -32,7 +32,7 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
-        // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
+        // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-apk-versions)
         // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
         // flag during build.
         versionCode = flutter.versionCode
@@ -51,6 +51,19 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            // R8 shrinking DISABLED: in the AGP 9 era it strips WorkManager's
+            // reflectively-loaded WorkDatabase_Impl (transitive dependency of
+            // the Google Mobile Ads SDK), which crashes the app at startup
+            // inside androidx.startup.InitializationProvider — before Flutter
+            // even runs. Debug builds are unaffected (no shrinking), which is
+            // why only the Play/bundle build crashed. The keep rules in
+            // proguard-rules.pro stay wired in case this is re-enabled.
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
