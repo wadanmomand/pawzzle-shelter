@@ -419,8 +419,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget _tapArea(GameData data) {
     final shelter = data.shelter!;
     return Container(
-      margin: const EdgeInsets.fromLTRB(12, 4, 12, 10),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+      margin: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -438,8 +438,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 150,
-                width: 170,
+                height: 112,
+                width: 150,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -452,8 +452,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       child: ScaleTransition(
                         scale: _tapCtrl,
                         child: Container(
-                          width: 128,
-                          height: 128,
+                          width: 96,
+                          height: 96,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
@@ -476,13 +476,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.pets_rounded,
-                                  size: 44, color: Colors.white),
+                                  size: 32, color: Colors.white),
                               Text(
                                 'TAP',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: 22,
+                                  fontSize: 17,
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -497,24 +497,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               const SizedBox(width: 4),
               Image.asset(
                 'assets/pets/puppy_milo.webp',
-                width: 110,
-                height: 110,
+                width: 84,
+                height: 84,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const SizedBox(width: 110),
+                errorBuilder: (_, _, _) => const SizedBox(width: 84),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             'TOTAL INCOME: ${formatCompact(ShelterEconomy.totalIncomePerSec(shelter))}/s • Passive earnings while away!',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
-              fontSize: 13,
+              fontSize: 12,
               color: AppColors.teal,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           _autoTapperChip(data),
         ],
       ),

@@ -205,9 +205,9 @@ class AnimatedNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 260),
+      duration: const Duration(milliseconds: 130),
       transitionBuilder: (child, animation) => SlideTransition(
-        position: Tween(begin: const Offset(0, 0.45), end: Offset.zero)
+        position: Tween(begin: const Offset(0, 0.18), end: Offset.zero)
             .animate(animation),
         child: FadeTransition(opacity: animation, child: child),
       ),
