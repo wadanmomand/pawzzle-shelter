@@ -51,14 +51,17 @@ class AdService {
 
   // -- banner ------------------------------------------------------------
 
-  BannerAd makeBanner({void Function()? onLoaded}) {
+  BannerAd makeBanner({void Function()? onLoaded, void Function()? onFailed}) {
     return BannerAd(
       size: AdSize.banner,
       adUnitId: bannerId,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (_) => onLoaded?.call(),
-        onAdFailedToLoad: (ad, _) => ad.dispose(),
+        onAdFailedToLoad: (ad, _) {
+          ad.dispose();
+          onFailed?.call();
+        },
       ),
     )..load();
   }

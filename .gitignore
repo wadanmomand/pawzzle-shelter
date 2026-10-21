@@ -51,3 +51,6 @@ app.*.map.json
 key.properties
 **/key.properties
 
+
+*.apk
+*.apks

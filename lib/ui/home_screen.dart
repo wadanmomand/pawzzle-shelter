@@ -418,19 +418,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   Widget _tapArea(GameData data) {
     final shelter = data.shelter!;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-              color: AppColors.cardShadow,
-              blurRadius: 10,
-              offset: Offset(0, 3))
-        ],
-      ),
+    // No card background: the TAP row sits directly on the cream screen
+    // background so the room list gets maximum vertical space.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 2, 12, 4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -438,8 +429,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 112,
-                width: 150,
+                height: 96,
+                width: 128,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -452,8 +443,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       child: ScaleTransition(
                         scale: _tapCtrl,
                         child: Container(
-                          width: 96,
-                          height: 96,
+                          width: 80,
+                          height: 80,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
@@ -476,13 +467,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.pets_rounded,
-                                  size: 32, color: Colors.white),
+                                  size: 26, color: Colors.white),
                               Text(
                                 'TAP',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: 17,
+                                  fontSize: 15,
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -497,10 +488,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               const SizedBox(width: 4),
               Image.asset(
                 'assets/pets/puppy_milo.webp',
-                width: 84,
-                height: 84,
+                width: 64,
+                height: 64,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const SizedBox(width: 84),
+                errorBuilder: (_, _, _) => const SizedBox(width: 64),
               ),
             ],
           ),
@@ -510,11 +501,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
-              fontSize: 12,
+              fontSize: 11,
               color: AppColors.teal,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           _autoTapperChip(data),
         ],
       ),
