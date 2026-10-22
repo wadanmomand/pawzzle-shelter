@@ -1,4 +1,4 @@
-/// Shelter home: currencies, zone chips, room list, big TAP button.
+/// Shelter home: currencies, zone chips, room list, floating TAP button.
 library;
 
 import 'dart:async';
@@ -91,22 +91,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         if (ShelterEconomy.canPrestige(shelter)) _prestigeBanner(shelter),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'ROOMS — ${rooms.where((r) => shelter.rooms[r.id]!.isBuilt).length}/${rooms.length} unlocked',
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 15,
-                color: AppColors.textDark,
-                letterSpacing: 0.5,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'ROOMS — ${rooms.where((r) => shelter.rooms[r.id]!.isBuilt).length}/${rooms.length} unlocked',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
+                    color: AppColors.textDark,
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
-            ),
+              Text(
+                '${formatCompact(ShelterEconomy.totalIncomePerSec(shelter))}/s',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                  color: AppColors.teal,
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.only(bottom: 8),
+          child: Stack(
+            children: [
+              ListView.builder(
+                padding: const EdgeInsets.only(bottom: 170),
             itemCount: rooms.length,
             itemBuilder: (_, i) {
               final def = rooms[i];
@@ -120,8 +133,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               );
             },
           ),
+              Positioned(
+                bottom: 12,
+                right: 12,
+                child: _floatingTap(data),
+              ),
+            ],
+          ),
         ),
-        _tapArea(data),
       ],
     );
   }
@@ -226,10 +245,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final content = data.content!;
     final shelter = data.shelter!;
     return SizedBox(
-      height: 46,
+      height: 56,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         itemCount: content.zones.length,
         itemBuilder: (_, i) {
           final z = content.zones[i];
@@ -249,7 +268,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               },
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 decoration: BoxDecoration(
                   color: selected
                       ? AppColors.teal
@@ -416,99 +435,91 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _tapArea(GameData data) {
-    final shelter = data.shelter!;
-    // No card background: the TAP row sits directly on the cream screen
-    // background so the room list gets maximum vertical space.
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 2, 12, 4),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 96,
-                width: 128,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // floating +N texts
-                    for (final f in _floaters)
-                      _FloaterWidget(
-                          key: ValueKey(f.id), text: f.text, dx: f.dx),
-                    GestureDetector(
-                      onTapDown: _onTapDown,
-                      child: ScaleTransition(
-                        scale: _tapCtrl,
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.primary,
-                                AppColors.primaryDark
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.cardShadow,
-                                blurRadius: 12,
-                                offset: Offset(0, 6),
-                              )
+  /// Floating TAP cluster pinned to the bottom-right of the room list.
+  /// The old fixed TAP section ate ~200px of vertical space and hid rooms
+  /// behind it; floating it gives the room list the full screen height.
+  /// The list's bottom padding (170) keeps the last card scrollable above
+  /// this cluster.
+  Widget _floatingTap(GameData data) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        _autoTapperChip(data),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Image.asset(
+              'assets/pets/puppy_milo.webp',
+              width: 52,
+              height: 52,
+              fit: BoxFit.contain,
+              errorBuilder: (_, _, _) => const SizedBox(width: 52),
+            ),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 120,
+              height: 110,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.bottomCenter,
+                children: [
+                  // floating +N texts rise above the button
+                  for (final f in _floaters)
+                    _FloaterWidget(
+                        key: ValueKey(f.id), text: f.text, dx: f.dx),
+                  GestureDetector(
+                    onTapDown: _onTapDown,
+                    child: ScaleTransition(
+                      scale: _tapCtrl,
+                      child: Container(
+                        width: 72,
+                        height: 72,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.primary,
+                              AppColors.primaryDark
                             ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
                           ),
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.pets_rounded,
-                                  size: 26, color: Colors.white),
-                              Text(
-                                'TAP',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 15,
-                                  letterSpacing: 1,
-                                ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.cardShadow,
+                              blurRadius: 12,
+                              offset: Offset(0, 6),
+                            )
+                          ],
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.pets_rounded,
+                                size: 24, color: Colors.white),
+                            Text(
+                              'TAP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 14,
+                                letterSpacing: 1,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 4),
-              Image.asset(
-                'assets/pets/puppy_milo.webp',
-                width: 64,
-                height: 64,
-                fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const SizedBox(width: 64),
-              ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'TOTAL INCOME: ${formatCompact(ShelterEconomy.totalIncomePerSec(shelter))}/s • Passive earnings while away!',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 11,
-              color: AppColors.teal,
             ),
-          ),
-          const SizedBox(height: 2),
-          _autoTapperChip(data),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 
